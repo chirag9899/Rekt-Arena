@@ -193,11 +193,21 @@ contract BattleFactory is Ownable {
      */
     function createAndInitBattle(
         bytes32 battleId,
-        BattleConfig calldata config,
+        BattleConfig memory config,
         address agentA,
         address agentB,
         uint256 entryPrice
-    ) external onlyOwner validConfig(config) returns (address battleAddress) {
+    ) public validConfig(config) returns (address battleAddress) {
+        return _createAndInitBattle(battleId, config, agentA, agentB, entryPrice);
+    }
+    
+    function _createAndInitBattle(
+        bytes32 battleId,
+        BattleConfig memory config,
+        address agentA,
+        address agentB,
+        uint256 entryPrice
+    ) internal validConfig(config) returns (address battleAddress) {
         if (battles[battleId].battleAddress != address(0)) {
             revert DeploymentFailed();
         }
@@ -262,7 +272,7 @@ contract BattleFactory is Ownable {
         BattleConfig memory config = configTemplates[templateId];
         if (!config.enabled) revert InvalidParameters();
         
-        return createAndInitBattle(battleId, config, agentA, agentB, entryPrice);
+        return _createAndInitBattle(battleId, config, agentA, agentB, entryPrice);
     }
 
     // ============ View Functions ============

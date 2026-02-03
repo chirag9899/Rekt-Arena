@@ -138,7 +138,8 @@ contract MockUSDCTest is Test {
         mockUSDC.transferOwnership(user1);
         
         vm.prank(user1);
-        mockUSDC.acceptOwnership();
+        // MockUSDC uses Ownable, not Ownable2Step, so acceptOwnership() doesn't exist
+        // Ownership is transferred directly with transferOwnership()
         
         assertEq(mockUSDC.owner(), user1);
         

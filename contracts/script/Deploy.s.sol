@@ -9,7 +9,9 @@ import "../src/BattleFactory.sol";
 /**
  * @title Deploy
  * @dev Deployment script for Liquidation Arena contracts
- * Usage: forge script script/Deploy.s.sol --rpc-url $BASE_SEPOLIA_RPC_URL --broadcast --verify
+ * Usage: 
+ *   forge script script/Deploy.s.sol --rpc-url <RPC_URL> --broadcast --verify
+ *   forge script script/Deploy.s.sol --rpc-url amoy --broadcast --verify
  */
 contract Deploy is Script {
     // ============ Deployment State ============
@@ -24,10 +26,8 @@ contract Deploy is Script {
     DeploymentState public state;
 
     // ============ Environment Variables ============
-    string public constant ENV_RPC_URL = "BASE_SEPOLIA_RPC_URL";
     string public constant ENV_PRIVATE_KEY = "PRIVATE_KEY";
     string public constant ENV_FEE_RECIPIENT = "FEE_RECIPIENT";
-    string public constant ENV_BASESCAN_API_KEY = "BASESCAN_API_KEY";
 
     // ============ Events ============
     event ContractDeployed(string name, address addr, bytes32 salt);
@@ -51,12 +51,15 @@ contract Deploy is Script {
         address deployer = vm.addr(deployerPrivateKey);
         address feeRecipient = vm.envAddress(ENV_FEE_RECIPIENT);
         
+        string memory networkName = _detectNetwork();
+        
         console.log("========================================");
         console.log("Liquidation Arena Deployment");
         console.log("========================================");
         console.log("Deployer:", deployer);
         console.log("Fee Recipient:", feeRecipient);
-        console.log("Network: Base Sepolia");
+        console.log("Network:", networkName);
+        console.log("Chain ID:", vm.toString(block.chainid));
         console.log("========================================");
 
         vm.startBroadcast(deployerPrivateKey);
@@ -78,7 +81,7 @@ contract Deploy is Script {
             battleArenaImpl: battleArenaImpl,
             battleFactory: battleFactory,
             deployTimestamp: block.timestamp,
-            network: "base_sepolia"
+            network: networkName
         });
 
         // Write deployment JSON
@@ -97,18 +100,21 @@ contract Deploy is Script {
 
     /**
      * @dev Deploy with CREATE2 for deterministic addresses
-     * Usage: forge script script/Deploy.s.sol --sig "runWithCreate2(bytes32)" --rpc-url $BASE_SEPOLIA_RPC_URL --broadcast
+     * Usage: forge script script/Deploy.s.sol --sig "runWithCreate2(bytes32)" --rpc-url <RPC_URL> --broadcast
      */
     function runWithCreate2(bytes32 salt) external validateEnvironment {
         uint256 deployerPrivateKey = vm.envUint(ENV_PRIVATE_KEY);
         address deployer = vm.addr(deployerPrivateKey);
         address feeRecipient = vm.envAddress(ENV_FEE_RECIPIENT);
+        string memory networkName = _detectNetwork();
 
         console.log("========================================");
         console.log("Liquidation Arena Deployment (CREATE2)");
         console.log("========================================");
         console.log("Deployer:", deployer);
         console.log("Fee Recipient:", feeRecipient);
+        console.log("Network:", networkName);
+        console.log("Chain ID:", vm.toString(block.chainid));
         console.log("Salt:", vm.toString(salt));
         console.log("========================================");
 
@@ -131,7 +137,7 @@ contract Deploy is Script {
             battleArenaImpl: battleArenaImpl,
             battleFactory: battleFactory,
             deployTimestamp: block.timestamp,
-            network: "base_sepolia"
+            network: networkName
         });
 
         // Write deployment JSON
@@ -170,15 +176,6 @@ contract Deploy is Script {
     // ============ Internal Functions ============
     
     function _validateEnvironment() internal view {
-        // Check RPC URL
-        try vm.envString(ENV_RPC_URL) returns (string memory rpcUrl) {
-            if (bytes(rpcUrl).length == 0) {
-                revert MissingEnvironmentVariable(ENV_RPC_URL);
-            }
-        } catch {
-            revert MissingEnvironmentVariable(ENV_RPC_URL);
-        }
-
         // Check Private Key
         try vm.envUint(ENV_PRIVATE_KEY) returns (uint256) {
             // Valid private key
@@ -196,6 +193,24 @@ contract Deploy is Script {
         }
 
         console.log("Environment validation passed!");
+    }
+    
+    function _detectNetwork() internal view returns (string memory) {
+        uint256 chainId = block.chainid;
+        
+        // Common testnet chain IDs
+        if (chainId == 80002) return "amoy";
+        if (chainId == 84532) return "base_sepolia";
+        if (chainId == 11155111) return "sepolia";
+        if (chainId == 5) return "goerli";
+        
+        // Mainnet chain IDs
+        if (chainId == 137) return "polygon";
+        if (chainId == 8453) return "base";
+        if (chainId == 1) return "ethereum";
+        
+        // Default to chain ID as string
+        return vm.toString(chainId);
     }
 
     function _deployMockUSDC(address owner) internal returns (address) {
@@ -315,31 +330,39 @@ contract Deploy is Script {
             ".json"
         );
 
-        // Create deployments directory if it doesn't exist
-        vm.createDir("deployments", true);
-        
-        vm.writeFile(filename, json);
-        console.log("Deployment state written to:", filename);
-
-        // Also write to latest.json
-        vm.writeFile("deployments/latest.json", json);
-        console.log("Latest deployment state written to: deployments/latest.json");
+        // Try to write deployment files (may fail in restricted environments)
+        // This is optional - addresses are already logged to console
+        try vm.createDir("deployments", true) {
+            vm.writeFile(filename, json);
+            console.log("Deployment state written to:", filename);
+            vm.writeFile("deployments/latest.json", json);
+            console.log("Latest deployment state written to: deployments/latest.json");
+        } catch {
+            // Deployment files are optional - addresses are logged above
+            console.log("Note: Could not write deployment files (restricted environment)");
+        }
     }
 
     function _writeSingleDeployment(string memory name, address addr) internal {
+        string memory networkName = _detectNetwork();
         string memory json = string.concat(
             '{\n',
-            '  "network": "base_sepolia",\n',
+            '  "network": "', networkName, '",\n',
             '  "timestamp": ', vm.toString(block.timestamp), ',\n',
             '  "contract": "', name, '",\n',
             '  "address": "', vm.toString(addr), '"\n',
             '}'
         );
 
-        vm.createDir("deployments", true);
-        vm.writeFile(
-            string.concat("deployments/", name, "_", vm.toString(block.timestamp), ".json"),
-            json
-        );
+        // Try to write deployment file (may fail in restricted environments)
+        try vm.createDir("deployments", true) {
+            vm.writeFile(
+                string.concat("deployments/", name, "_", vm.toString(block.timestamp), ".json"),
+                json
+            );
+        } catch {
+            // Deployment files are optional - just log to console
+            console.log("Deployment JSON:", json);
+        }
     }
 }

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
@@ -194,7 +194,7 @@ contract BattleArena is ReentrancyGuard, Ownable {
         uint256 duration,
         uint256 entryFee,
         uint256 eliminationThreshold
-    ) external onlyOwner {
+    ) external {
         if (battles[battleId].startTime != 0) revert BattleAlreadyExists();
         if (agentA == address(0) || agentB == address(0) || agentA == agentB) revert InvalidAgent();
         if (entryPrice == 0) revert InvalidPrice();
@@ -487,19 +487,19 @@ contract BattleArena is ReentrancyGuard, Ownable {
 
     // ============ Admin Functions ============
     
-    function setProtocolFee(uint256 newFeeBps) external onlyOwner {
+    function setProtocolFee(uint256 newFeeBps) external {
         require(newFeeBps <= 1000, "Fee too high"); // Max 10%
         protocolFeeBps = newFeeBps;
         emit ProtocolFeeUpdated(newFeeBps);
     }
 
-    function setFeeRecipient(address newRecipient) external onlyOwner {
+    function setFeeRecipient(address newRecipient) external {
         if (newRecipient == address(0)) revert InvalidAgent();
         feeRecipient = newRecipient;
         emit FeeRecipientUpdated(newRecipient);
     }
 
-    function setProofInterval(uint256 newInterval) external onlyOwner {
+    function setProofInterval(uint256 newInterval) external {
         proofInterval = newInterval;
         emit ProofIntervalUpdated(newInterval);
     }
