@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Tabs } from '@/components/shared/AnimatedTabs';
 import { BattleHistoryPage } from './BattleHistoryPage';

@@ -25,7 +25,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 const BLOCK_EXPLORER_URL = 'https://amoy.polygonscan.com';
 
 export function MyBetsPage({ onNavigate }: MyBetsPageProps) {
-  const { walletState, account } = useWallet();
+  const { walletState } = useWallet();
   const [bets, setBets] = useState<Bet[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

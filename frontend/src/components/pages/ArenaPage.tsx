@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Share2, TrendingUp, TrendingDown, Plus, X, Wifi, WifiOff, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { HealthBar, BetModal, ZKToast, WinLoseModal, VerificationStatus, VerificationInfo } from '@/components/shared';
+import { HealthBar, BetModal, WinLoseModal, VerificationStatus } from '@/components/shared';
 import { formatCurrency, formatTimeRemaining } from '@/lib/utils';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { useBetting } from '@/hooks/useBetting';
@@ -28,8 +28,7 @@ export function ArenaPage({ walletBalance, onNavigate }: ArenaPageProps) {
   const [activeBattle, setActiveBattle] = useState<Battle | null>(null);
   const [betModalOpen, setBetModalOpen] = useState(false);
   const [bettingSide, setBettingSide] = useState<BattleSide | null>(null);
-  const [zkToastVisible, setZkToastVisible] = useState(false);
-  const [zkStatus, setZkStatus] = useState<'verified' | 'pending' | 'failed'>('verified');
+  // zkToastVisible and zkStatus removed - unused
   const [winLoseModalOpen, setWinLoseModalOpen] = useState(false);
   const [winLoseType, setWinLoseType] = useState<'win' | 'lose' | 'sponsor_win'>('win');
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
@@ -265,7 +264,7 @@ export function ArenaPage({ walletBalance, onNavigate }: ArenaPageProps) {
     // Also listen for userWon event from WebSocket
     const handleUserWon = (event: Event) => {
       const customEvent = event as CustomEvent;
-      const { betAmount, winnings, totalPayout, side, payoutRatio } = customEvent.detail;
+      const { betAmount, winnings, side } = customEvent.detail;
       
       // Show impressive win modal
       setWinLoseType('win');
@@ -348,11 +347,7 @@ export function ArenaPage({ walletBalance, onNavigate }: ArenaPageProps) {
   const handleCashOut = () => {
   };
 
-  const showZKToast = (status: 'verified' | 'pending' | 'failed') => {
-    setZkStatus(status);
-    setZkToastVisible(true);
-    setTimeout(() => setZkToastVisible(false), 3000);
-  };
+  // showZKToast function removed - unused
 
   // Use WebSocket price or active battle price
   const displayPrice = activeBattle?.currentPrice || currentPrice;
@@ -844,12 +839,6 @@ export function ArenaPage({ walletBalance, onNavigate }: ArenaPageProps) {
         error={bettingError || (bettingStatus === 'error' ? 'Failed to place bet' : null)}
       />
 
-      {/* ZK Toast */}
-      <ZKToast
-        status={zkStatus}
-        blockNumber="18473221"
-        isVisible={zkToastVisible}
-      />
 
       {/* Win/Lose Modal */}
       <WinLoseModal

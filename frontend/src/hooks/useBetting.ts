@@ -2,38 +2,15 @@ import { useState, useCallback } from 'react';
 import { useActiveAccount, useSendTransaction, useActiveWallet } from 'thirdweb/react';
 import { prepareContractCall, toUnits } from 'thirdweb';
 import { getContract } from 'thirdweb';
-import { keccak256, toHex, signMessage } from 'thirdweb/utils';
+import { keccak256, toHex } from 'thirdweb/utils';
 import { decodeErrorResult } from 'viem';
 import { client, chain, CONTRACTS, BATTLE_FACTORY_ABI } from '@/lib/thirdweb';
-import apiClient from '@/lib/api';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 const USDC_DECIMALS = 6;
 
-// USDC ABI for approve
-const USDC_APPROVE_ABI = [
-  {
-    "inputs": [
-      { "internalType": "address", "name": "spender", "type": "address" },
-      { "internalType": "uint256", "name": "amount", "type": "uint256" }
-    ],
-    "name": "approve",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "address", "name": "owner", "type": "address" },
-      { "internalType": "address", "name": "spender", "type": "address" }
-    ],
-    "name": "allowance",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  }
-];
+// USDC ABI removed - not used
 
 export function useBetting() {
   const account = useActiveAccount();
@@ -73,9 +50,9 @@ export function useBetting() {
         params: [battleAddress, approvalAmount],
       });
 
-      const approvalResult = await new Promise<any>((resolve, reject) => {
+      await new Promise<any>((resolve, reject) => {
         sendTransaction(transaction, {
-          onSuccess: (txResult) => {
+          onSuccess: (txResult: any) => {
             console.log('✅ USDC approval successful:', txResult.transactionHash);
             resolve(txResult);
           },
@@ -238,7 +215,7 @@ export function useBetting() {
         // Wrap sendTransaction in a promise since it uses callbacks
         const result = await new Promise<any>((resolve, reject) => {
           sendTransaction(transaction, {
-            onSuccess: (txResult) => {
+            onSuccess: (txResult: any) => {
               if (!txResult || !txResult.transactionHash) {
                 reject(new Error('Transaction failed: No transaction hash returned'));
               } else {
@@ -467,7 +444,7 @@ export function useBetting() {
       // Wrap sendTransaction in a promise since it uses callbacks
       const result = await new Promise<any>((resolve, reject) => {
         sendTransaction(transaction, {
-          onSuccess: (txResult) => {
+          onSuccess: (txResult: any) => {
             if (!txResult || !txResult.transactionHash) {
               reject(new Error('Transaction failed: No transaction hash returned'));
             } else {

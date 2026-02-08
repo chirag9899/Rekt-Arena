@@ -16,8 +16,7 @@ export function useWallet() {
     isConnected: false,
   });
   
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // isLoading and error removed - unused
 
   // USDC contract for balance
   const usdcContract = getUSDCContract();
@@ -47,7 +46,7 @@ export function useWallet() {
   
   // Force refetch when refreshTrigger changes
   useEffect(() => {
-    if (refreshTrigger > 0 && account?.address) {
+    if (refreshTrigger > 0 && account?.address && refetchBalance) {
       refetchBalance();
     }
   }, [refreshTrigger, account?.address, refetchBalance]);
@@ -118,8 +117,8 @@ export function useWallet() {
     walletState,
     connect,
     handleDisconnect,
-    isLoading,
-    error,
+    isLoading: false, // Removed state, return false
+    error: null, // Removed state, return null
     account,
     wallet,
   };

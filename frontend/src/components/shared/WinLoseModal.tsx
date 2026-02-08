@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { X, Trophy, AlertCircle, TrendingUp, TrendingDown, Coins } from 'lucide-react';
+import { X, Trophy, AlertCircle, Coins } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { formatCurrency } from '@/lib/utils';
 

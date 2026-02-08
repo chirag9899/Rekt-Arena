@@ -1,4 +1,4 @@
-import { Info, Shield, CheckCircle2, Clock, XCircle, Loader2 } from 'lucide-react';
+import { Info, Shield } from 'lucide-react';
 import { VerificationStatus } from './VerificationStatus';
 
 interface VerificationInfoProps {

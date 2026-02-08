@@ -1,8 +1,8 @@
-import { Clock, Users, TrendingUp, TrendingDown, Zap, Skull } from 'lucide-react';
+import { Clock, Users, TrendingUp, TrendingDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { formatCurrency, formatCompactNumber } from '@/lib/utils';
 import { CountdownTimer } from './CountdownTimer';
-import { VerificationStatus, VerificationBadge } from './VerificationStatus';
+import { VerificationStatus } from './VerificationStatus';
 import type { Battle } from '@/types';
 
 interface BattleCardProps {

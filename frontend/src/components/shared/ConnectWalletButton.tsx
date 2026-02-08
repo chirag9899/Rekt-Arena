@@ -23,7 +23,7 @@ export function ConnectWalletButton({ onBalanceChange }: ConnectWalletButtonProp
           ),
           className: "bg-long hover:bg-long-dark text-white text-xs h-7 px-2.5 rounded-md font-medium transition-colors",
         }}
-      connectedButton={(props) => {
+      connectedButton={(props: any) => {
         const { account, displayBalance } = props;
         const balance = displayBalance ? parseFloat(displayBalance.split(' ')[0]) : 0;
         

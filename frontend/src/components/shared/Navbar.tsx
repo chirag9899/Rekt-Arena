@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Bell, Menu, X, TrendingUp, ChevronDown, Home, History, Receipt, Plus, Swords } from 'lucide-react';
+import { Bell, Menu, X, TrendingUp, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { formatCurrency } from '@/lib/utils';
@@ -10,6 +10,7 @@ interface NavbarProps {
   priceChange?: number;
   activeBattle?: string;
   onBalanceChange?: (balance: number) => void;
+  onNavigate?: (page: string) => void;
 }
 
 export function Navbar({ 
@@ -17,7 +18,7 @@ export function Navbar({
   priceChange = 2.3,
   activeBattle = '#48 LIVE',
   onBalanceChange,
-  onNavigate
+  onNavigate: _onNavigate
 }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 

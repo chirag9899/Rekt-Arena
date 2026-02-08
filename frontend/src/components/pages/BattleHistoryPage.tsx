@@ -27,6 +27,7 @@ interface Stats {
 interface BattleHistoryPageProps {
   onNavigate: (page: string) => void;
   tier?: 'PRIMARY' | 'SECONDARY';
+  hideHeader?: boolean;
 }
 
 const ITEMS_PER_PAGE = 20;

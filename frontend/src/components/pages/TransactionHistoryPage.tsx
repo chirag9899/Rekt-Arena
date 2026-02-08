@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, ExternalLink, Filter, Search } from 'lucide-react';
+import { ExternalLink, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import apiClient from '@/lib/api';
 import { formatCurrency } from '@/lib/utils';
@@ -25,7 +25,7 @@ interface TransactionHistoryPageProps {
 
 const BLOCK_EXPLORER_URL = 'https://amoy.polygonscan.com';
 
-export function TransactionHistoryPage({ onNavigate }: TransactionHistoryPageProps) {
+export function TransactionHistoryPage({ onNavigate: _onNavigate }: TransactionHistoryPageProps) {
   const { walletState } = useWallet();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ArrowLeft, TrendingUp, TrendingDown, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { Switch } from '@/components/ui/switch';
+// Switch removed - unused
 import { formatCurrency } from '@/lib/utils';
 import { useWallet } from '@/hooks/useWallet';
 import apiClient from '@/lib/api';
@@ -38,7 +38,7 @@ const USDC_DECIMALS = 6;
 export function CreatePage({ walletBalance, onNavigate }: CreatePageProps) {
   const { walletState, account } = useWallet();
   const activeAccount = useActiveAccount();
-  const { mutate: sendTransaction, isPending: isTxPending, error: txError } = useSendTransaction();
+  const { mutate: sendTransaction, isPending: isTxPending } = useSendTransaction();
   const { currentPrice } = useWebSocket(); // Get current price from WebSocket
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedMarket, setSelectedMarket] = useState(AVAILABLE_MARKETS[0]);
@@ -50,7 +50,7 @@ export function CreatePage({ walletBalance, onNavigate }: CreatePageProps) {
   const minBet = 100;
   const potentialWin = amount * 1.8;
   const platformFee = amount * 0.1;
-  const availableBalance = walletState.balance || walletBalance;
+  // availableBalance removed - unused
   
   // Get wallet address from either walletState or account (fallback)
   const walletAddress = walletState.address || account?.address || activeAccount?.address;
@@ -93,13 +93,13 @@ export function CreatePage({ walletBalance, onNavigate }: CreatePageProps) {
           });
           
           // Wrap sendTransaction in a promise
-          await new Promise((resolve, reject) => {
+          await new Promise<any>((resolve, reject) => {
             sendTransaction(approveTx, {
-              onSuccess: (result) => {
+              onSuccess: (result: any) => {
                 console.log('✅ USDC approved:', result?.transactionHash);
                 resolve(result);
               },
-              onError: (error) => {
+              onError: (error: any) => {
                 if (error?.code === 4001 || error?.message?.includes('denied') || error?.message?.includes('rejected')) {
                   reject(new Error('Transaction was rejected. Please approve USDC to continue.'));
                 } else {
@@ -170,7 +170,7 @@ export function CreatePage({ walletBalance, onNavigate }: CreatePageProps) {
         const result = await Promise.race([
           new Promise<any>((resolve, reject) => {
             sendTransaction(createTx, {
-              onSuccess: (txResult) => {
+              onSuccess: (txResult: any) => {
                 console.log('📨 Transaction submitted:', txResult);
                 if (!txResult || !txResult.transactionHash) {
                   console.error('❌ No transaction hash in result:', txResult);
@@ -207,12 +207,7 @@ export function CreatePage({ walletBalance, onNavigate }: CreatePageProps) {
         // This allows users to bet gaslessly on this battle
         try {
           if (activeAccount && walletAddress) {
-            // Message signer for Yellow SDK
-            const messageSigner = async (message: string): Promise<string> => {
-              // This will be handled by the backend Yellow service
-              // For now, we'll let backend handle the signing
-              return '';
-            };
+            // Message signer for Yellow SDK - removed unused
             
             // Get battle address from transaction receipt or contract
             // For now, we'll use the battleId to create session later

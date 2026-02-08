@@ -94,7 +94,7 @@ export const FadeInDiv = ({
   className,
   tabs,
   active,
-  hovering,
+  hovering: _hovering,
 }: {
   className?: string;
   tabs: Tab[];

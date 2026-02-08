@@ -123,7 +123,7 @@ interface VerificationBadgeProps {
   className?: string;
 }
 
-export function VerificationBadge({ status, agentType, className = '' }: VerificationBadgeProps) {
+export function VerificationBadge({ status, agentType: _agentType, className = '' }: VerificationBadgeProps) {
   const getBadgeConfig = () => {
     switch (status) {
       case 'verified':

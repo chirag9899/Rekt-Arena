@@ -116,7 +116,7 @@ function IconContainer({
   let distance = useTransform(mouseX, (val) => {
     let bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
 
-    return val - bounds.x - bounds.width / 2;
+    return (val as number) - bounds.x - bounds.width / 2;
   });
 
   let widthTransform = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
